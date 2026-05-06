@@ -201,11 +201,18 @@
             throw new Error(responseData.message || 'Order submission failed');
           }
         } else {
-          throw new Error('Server error. Please try again.');
+          throw new Error('Server error (Status ' + res.status + '). Please try again.');
         }
       } catch (err) {
-        console.error('Error:', err);
-        alert('May problema sa pag-submit. Pakiulit o mag-message sa amin sa Facebook.');
+        console.error('❌ ORDER SUBMISSION ERROR:');
+        console.error('Error Message:', err.message);
+        console.error('Full Error:', err);
+        console.error('APPS_SCRIPT_URL:', APPS_SCRIPT_URL);
+        
+        // Show detailed error
+        let errorMsg = 'May problema sa pag-submit:\n\n' + err.message + '\n\nCheck browser console (F12) for details.';
+        alert(errorMsg);
+        
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
         submitBtn.style.opacity = '1';
