@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout — WVS & MTN</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Permanent+Marker&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="logo">WVS<span>&</span>MTN</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Shop</a></li>
+      <li><a href="cart.html">Cart <span class="cart-count" id="cartCount">0</span></a></li>
+    </ul>
+    <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="products.html">Shop</a>
+    <a href="cart.html">Cart</a>
+  </div>
+
+  <div class="checkout-page">
+    <h1 class="page-title">Checkout</h1>
+
+    <!-- Order Summary -->
+    <div id="orderSummary" style="margin-bottom:2rem;"></div>
+
+    <!-- Checkout Form -->
+    <!-- 
+      IMPORTANT: Palitan ang YOUR_FORMSPREE_ID ng iyong actual Formspree form ID.
+      Steps: Pumunta sa formspree.io → Create account → New Form → Kumuha ng form ID
+    -->
+    <div class="checkout-form">
+      <h2 style="font-family:var(--font-display);letter-spacing:2px;margin-bottom:1.5rem;font-size:1.5rem;">Your Details</h2>
+      
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="custName" placeholder="Juan dela Cruz" required />
+      </div>
+
+      <div class="form-group">
+        <label>Contact Number *</label>
+        <input type="tel" id="custPhone" placeholder="09XX XXX XXXX" required />
+      </div>
+
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="custEmail" placeholder="juan@email.com" />
+      </div>
+
+      <div class="form-group">
+        <label>Delivery Address *</label>
+        <textarea id="custAddress" rows="3" placeholder="Street, Barangay, City, Province" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Payment Method *</label>
+        <select id="payMethod">
+          <option value="">-- Select --</option>
+          <option value="GCash">GCash</option>
+          <option value="COD">Cash on Delivery (COD)</option>
+          <option value="Bank Transfer">Bank Transfer</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Notes / Special Instructions</label>
+        <textarea id="custNotes" rows="2" placeholder="Any special requests?"></textarea>
+      </div>
+
+      <div id="totalDisplay" style="margin:1.5rem 0;font-family:var(--font-display);font-size:1.5rem;letter-spacing:2px;color:var(--accent2);"></div>
+
+      <button class="btn-primary" onclick="submitOrder(event)" style="width:100%;font-size:1.2rem;padding:1rem;transition:opacity 0.2s,background 0.2s;">
+        Place Order
+      </button>
+
+      <p style="margin-top:1rem;font-size:0.8rem;color:var(--text-muted);text-align:center;">
+        Your order will be sent to WVS & MTN. They will contact you to confirm.
+      </p>
+    </div>
+
+    <div id="successMsg" style="display:none;" class="checkout-form">
+      <div style="text-align:center;padding:2rem;">
+        <div style="font-size:3rem;margin-bottom:1rem;">🎉</div>
+        <h2 style="font-family:var(--font-display);font-size:2rem;letter-spacing:3px;margin-bottom:1rem;">Order Placed!</h2>
+        <p>Salamat sa iyong order! Makikipag-ugnayan sa iyo ang WVS & MTN para sa confirmation.</p>
+        <br>
+        <a href="products.html" class="btn-primary">Continue Shopping</a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo">WVS<span>&</span>MTN</div>
+    <p>© 2025 WVS & MTN Lifestyle Essentials.</p>
+  </footer>
+
+  <script src="js/cart.js"></script>
+  <script>
+    // ⚠️ SETUP GOOGLE APPS SCRIPT:
+    // 1. Create a Google Sheet & Google Apps Script (see instructions below)
+    // 2. Deploy as Web App
+    // 3. Replace YOUR_APPS_SCRIPT_URL with the actual deployment URL
+    // 4. Make sure to set OWNER_EMAIL in the Apps Script
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLLCFMO4W2DehFtkKp1FBDouH8Vap6qUrHzzZQjx46RgjCpFctVQZViQyTchcwtj_c/exec';  // REPLACE THIS with your deployed Web App URL
+
+    function renderSummary() {
+      const cart = getCart();
+      const el = document.getElementById('orderSummary');
+
+      if (cart.length === 0) {
+        el.innerHTML = `<div class="empty-state"><h3>Cart is empty</h3><a href="products.html" class="btn-primary">Shop Now</a></div>`;
+        return;
+      }
+
+      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      el.innerHTML = `
+        <div style="background:var(--white);border:1px solid var(--border);padding:1.5rem;border-radius:4px;">
+          <h3 style="font-family:var(--font-display);letter-spacing:2px;margin-bottom:1rem;">Order Summary</h3>
+          ${cart.map(i => `
+            <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);">
+              <span>${i.name} × ${i.qty}</span>
+              <strong>₱${(i.price * i.qty).toLocaleString()}</strong>
+            </div>
+          `).join('')}
+          <div style="display:flex;justify-content:space-between;margin-top:1rem;font-family:var(--font-display);font-size:1.3rem;letter-spacing:2px;">
+            <span>TOTAL</span>
+            <span style="color:var(--accent2)">₱${total.toLocaleString()}</span>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('totalDisplay').textContent = `Total: ₱${total.toLocaleString()}`;
+    }
+
+    async function submitOrder(event) {
+      if (!event || !event.target) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+      
+      const name    = document.getElementById('custName').value.trim();
+      const phone   = document.getElementById('custPhone').value.trim();
+      const email   = document.getElementById('custEmail').value.trim();
+      const address = document.getElementById('custAddress').value.trim();
+      const payment = document.getElementById('payMethod').value;
+      const notes   = document.getElementById('custNotes').value.trim();
+
+      if (!name || !phone || !address || !payment) {
+        alert('Please fill in all required fields (Name, Phone, Address, Payment Method).');
+        return;
+      }
+
+      const cart = getCart();
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+
+      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const orderList = cart.map(i => `${i.name} x${i.qty} = ₱${(i.price * i.qty).toLocaleString()}`).join('\n');
+
+      // Show loading state
+      const submitBtn = event.target;
+      const originalText = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      submitBtn.style.opacity = '0.7';
+
+      const orderData = {
+        name: name,
+        phone: phone,
+        email: email,
+        address: address,
+        paymentMethod: payment,
+        orderItems: orderList,
+        total: `₱${total.toLocaleString()}`,
+        notes: notes
+      };
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(orderData),
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (res.ok) {
+          const responseData = await res.json();
+          if (responseData.status === 'success') {
+            clearCart();
+            document.querySelector('.checkout-form').style.display = 'none';
+            document.getElementById('orderSummary').style.display = 'none';
+            document.getElementById('successMsg').style.display = 'block';
+          } else {
+            throw new Error(responseData.message || 'Order submission failed');
+          }
+        } else {
+          throw new Error('Server error. Please try again.');
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        alert('May problema sa pag-submit. Pakiulit o mag-message sa amin sa Facebook.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+        submitBtn.style.opacity = '1';
+      }
+    }
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+
+    renderSummary();
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 40);
+    });
+  </script>
+</body>
+</html>

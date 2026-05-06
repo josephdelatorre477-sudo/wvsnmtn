@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop — WVS & MTN</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Permanent+Marker&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="logo">WVS<span>&</span>MTN</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Shop</a></li>
+      <li><a href="cart.html">Cart <span class="cart-count" id="cartCount">0</span></a></li>
+    </ul>
+    <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="products.html">Shop</a>
+    <a href="cart.html">Cart</a>
+  </div>
+
+  <div class="products-page">
+    <h1 class="page-title">All Products</h1>
+
+    <!-- Filter Buttons -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-category="all" onclick="filterProducts('all', this)">All</button>
+      <button class="filter-btn" data-category="surf" onclick="filterProducts('surf', this)">🏄 Surf</button>
+      <button class="filter-btn" data-category="bags" onclick="filterProducts('bags', this)">🎒 Bags</button>
+      <button class="filter-btn" data-category="apparel" onclick="filterProducts('apparel', this)">👕 Apparel</button>
+      <button class="filter-btn" data-category="outdoor" onclick="filterProducts('outdoor', this)">⛺ Outdoor</button>
+    </div>
+
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo">WVS<span>&</span>MTN</div>
+    <p>Tuburan, Tunga-tunga, Maasin City, Southern Leyte</p>
+    <p>📘 <a href="https://www.facebook.com/WVSMTN" target="_blank">WVS & MTN on Facebook</a></p>
+    <p class="footer-copy">© 2025 WVS & MTN Lifestyle Essentials. All rights reserved.</p>
+  </footer>
+
+  <script src="js/cart.js"></script>
+  <script>
+    // Sample products — later pwedeng i-replace ng SheetDB API
+    const allProducts = [
+      { id: 1,  name: "WVS&MTN Fanny Pack",         price: 350,  category: "bags",    emoji: "👜" },
+      { id: 2,  name: "WVS&MTN Bucket Hat",          price: 280,  category: "apparel", emoji: "🎩" },
+      { id: 3,  name: "Men's Boardshort",            price: 450,  category: "apparel", emoji: "🩳" },
+      { id: 4,  name: "Women's Boardshort",          price: 450,  category: "apparel", emoji: "🩱" },
+      { id: 5,  name: "Surf Leash",                  price: 200,  category: "surf",    emoji: "🏄" },
+      { id: 6,  name: "Surfskate Board",             price: 3500, category: "surf",    emoji: "🛹" },
+      { id: 7,  name: "Hammock (Regular w/ net)",    price: 850,  category: "outdoor", emoji: "🌿" },
+      { id: 8,  name: "Hammock (King size w/ net)",  price: 1200, category: "outdoor", emoji: "🌴" },
+      { id: 9,  name: "Outdoor Backpack",            price: 1500, category: "bags",    emoji: "🎒" },
+      { id: 10, name: "Surf Wax",                    price: 80,   category: "surf",    emoji: "🏄" },
+      { id: 11, name: "WVS&MTN Tee",                price: 380,  category: "apparel", emoji: "👕" },
+      { id: 12, name: "Drybag",                      price: 650,  category: "outdoor", emoji: "💧" },
+    ];
+
+    let currentFilter = 'all';
+
+    function renderProducts(products) {
+      const grid = document.getElementById('productsGrid');
+      if (products.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><h3>No products found</h3><p>Try another category.</p></div>`;
+        return;
+      }
+      grid.innerHTML = products.map(p => `
+        <div class="product-card">
+          <div class="product-emoji">${p.emoji}</div>
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <p class="product-price">₱${p.price.toLocaleString()}</p>
+            <button class="btn-add" onclick="addToCart(${p.id}, '${p.name}', ${p.price})">Add to Cart</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterProducts(cat, btn) {
+      currentFilter = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filtered = cat === 'all' ? allProducts : allProducts.filter(p => p.category === cat);
+      renderProducts(filtered);
+    }
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+
+    // Check URL param for category and apply filter correctly
+    window.addEventListener('DOMContentLoaded', function() {
+      const params = new URLSearchParams(window.location.search);
+      const catParam = params.get('cat');
+      
+      if (catParam) {
+        // Find the button that matches the category, not the button text
+        const buttons = document.querySelectorAll('.filter-btn');
+        let targetBtn = null;
+        
+        for (const btn of buttons) {
+          // Map button content to category: check if button's data-category matches
+          const btnCategory = btn.getAttribute('data-category');
+          if (btnCategory === catParam) {
+            targetBtn = btn;
+            break;
+          }
+        }
+        
+        // If no data-category attribute, fallback to matching by known order
+        if (!targetBtn) {
+          const btnArray = Array.from(buttons);
+          const categoryMap = { 'all': 0, 'surf': 1, 'bags': 2, 'apparel': 3, 'outdoor': 4 };
+          if (categoryMap[catParam] !== undefined) {
+            targetBtn = btnArray[categoryMap[catParam]];
+          }
+        }
+        
+        if (targetBtn) {
+          filterProducts(catParam, targetBtn);
+        } else {
+          renderProducts(allProducts);
+        }
+      } else {
+        renderProducts(allProducts);
+      }
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 40);
+    });
+  </script>
+</body>
+</html>

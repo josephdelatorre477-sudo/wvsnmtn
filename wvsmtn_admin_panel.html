@@ -1,0 +1,548 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-sans);}
+:root{
+  --gold:#e8a020;
+  --green:#2a7a5a;
+  --dark:#1a1a1a;
+}
+
+.admin-wrap{display:flex;min-height:600px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;background:var(--color-background-primary);}
+
+/* SIDEBAR */
+.sidebar{width:200px;min-width:200px;background:var(--dark);display:flex;flex-direction:column;padding:1.2rem 0;}
+.sidebar-logo{font-size:1.3rem;font-weight:500;color:#fff;padding:0 1.2rem 1.2rem;border-bottom:1px solid rgba(255,255,255,.1);letter-spacing:1px;}
+.sidebar-logo span{color:var(--gold);}
+.sidebar-label{font-size:11px;color:rgba(255,255,255,.35);padding:.8rem 1.2rem .3rem;letter-spacing:1px;text-transform:uppercase;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:.65rem 1.2rem;color:rgba(255,255,255,.65);cursor:pointer;font-size:14px;transition:all .15s;border-left:3px solid transparent;}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.07);}
+.nav-item.active{color:#fff;background:rgba(232,160,32,.15);border-left-color:var(--gold);}
+.nav-icon{font-size:14px;width:18px;text-align:center;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{padding:.9rem 1.5rem;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between;}
+.topbar h2{font-size:16px;font-weight:500;color:var(--color-text-primary);}
+.topbar-badge{background:rgba(232,160,32,.15);color:#b87a10;font-size:12px;padding:3px 10px;border-radius:var(--border-radius-md);}
+.content{flex:1;padding:1.2rem 1.5rem;overflow-y:auto;}
+
+/* PANELS */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1.5rem;}
+.stat-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.9rem 1rem;}
+.stat-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px;}
+.stat-num{font-size:22px;font-weight:500;color:var(--color-text-primary);}
+.stat-num.gold{color:var(--gold);}
+.stat-num.green{color:var(--green);}
+
+/* FORM */
+.form-section{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1.2rem;margin-bottom:1.2rem;}
+.form-section h3{font-size:14px;font-weight:500;margin-bottom:1rem;color:var(--color-text-primary);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group label{font-size:12px;color:var(--color-text-secondary);}
+.form-group input,.form-group select,.form-group textarea{font-size:14px;padding:.45rem .7rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);color:var(--color-text-primary);outline:none;font-family:var(--font-sans);}
+.form-group textarea{resize:vertical;min-height:70px;}
+
+/* IMAGE UPLOAD */
+.img-upload-box{border:2px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);padding:1.5rem;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.img-upload-box:hover{border-color:var(--gold);}
+.img-upload-box input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.img-preview{width:100%;max-height:140px;object-fit:contain;border-radius:var(--border-radius-md);display:none;margin-bottom:.5rem;}
+.upload-icon{font-size:24px;color:var(--color-text-secondary);margin-bottom:6px;}
+.upload-text{font-size:13px;color:var(--color-text-secondary);}
+.upload-hint{font-size:11px;color:var(--color-text-secondary);opacity:.6;margin-top:3px;}
+
+/* BUTTONS */
+.btn-primary{background:var(--gold);color:#1a1a1a;border:none;padding:.55rem 1.2rem;border-radius:var(--border-radius-md);font-size:14px;font-weight:500;cursor:pointer;transition:opacity .2s;}
+.btn-primary:hover{opacity:.85;}
+.btn-danger{background:transparent;color:#c0392b;border:0.5px solid #c0392b;padding:.4rem .8rem;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;}
+.btn-danger:hover{background:#c0392b;color:#fff;}
+.btn-edit{background:transparent;color:var(--color-text-secondary);border:0.5px solid var(--color-border-secondary);padding:.4rem .8rem;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;}
+.btn-edit:hover{background:var(--color-background-secondary);}
+.btn-sm-green{background:var(--green);color:#fff;border:none;padding:.5rem 1rem;border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;}
+
+/* PRODUCT TABLE */
+.product-list{display:flex;flex-direction:column;gap:8px;}
+.product-row{display:flex;align-items:center;gap:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.7rem 1rem;}
+.product-thumb{width:44px;height:44px;border-radius:var(--border-radius-md);object-fit:cover;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden;}
+.product-thumb img{width:100%;height:100%;object-fit:cover;}
+.product-info{flex:1;min-width:0;}
+.product-name{font-size:14px;font-weight:500;color:var(--color-text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.product-meta{font-size:12px;color:var(--color-text-secondary);}
+.product-price{font-size:15px;font-weight:500;color:var(--green);margin-right:8px;white-space:nowrap;}
+.product-actions{display:flex;gap:6px;flex-shrink:0;}
+.badge-cat{display:inline-block;font-size:10px;padding:2px 7px;border-radius:var(--border-radius-md);background:rgba(232,160,32,.15);color:#b87a10;margin-left:6px;}
+
+/* HIGHLIGHT */
+.highlight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:1rem;}
+.highlight-card{border-radius:var(--border-radius-md);overflow:hidden;border:0.5px solid var(--color-border-tertiary);position:relative;aspect-ratio:4/3;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;}
+.highlight-card img{width:100%;height:100%;object-fit:cover;}
+.highlight-del{position:absolute;top:5px;right:5px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.highlight-add-box{border:2px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .2s;}
+.highlight-add-box:hover{border-color:var(--gold);}
+.highlight-add-box input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.highlight-add-icon{font-size:22px;color:var(--color-text-secondary);}
+.highlight-add-text{font-size:11px;color:var(--color-text-secondary);margin-top:4px;}
+
+/* PROFILE */
+.profile-cover{width:100%;height:100px;border-radius:var(--border-radius-md);background:var(--dark);position:relative;overflow:hidden;margin-bottom:-40px;display:flex;align-items:center;justify-content:center;}
+.profile-cover img{width:100%;height:100%;object-fit:cover;}
+.profile-cover-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;cursor:pointer;}
+.profile-cover:hover .profile-cover-overlay{opacity:1;}
+.profile-cover input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.profile-avatar-wrap{position:relative;width:72px;height:72px;margin:0 0 0 1rem;z-index:2;}
+.profile-avatar{width:72px;height:72px;border-radius:50%;border:3px solid var(--color-background-primary);background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;}
+.profile-avatar-edit{position:absolute;bottom:0;right:0;background:var(--gold);border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.profile-avatar-edit input{position:absolute;inset:0;opacity:0;cursor:pointer;border-radius:50%;}
+.cover-hint{font-size:11px;color:#fff;letter-spacing:.5px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.2rem;right:1.2rem;background:var(--green);color:#fff;padding:.6rem 1.2rem;border-radius:var(--border-radius-md);font-size:13px;z-index:999;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* LOGIN */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:600px;background:var(--color-background-secondary);}
+.login-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:2rem;width:320px;}
+.login-logo{font-size:1.5rem;font-weight:500;text-align:center;color:var(--color-text-primary);margin-bottom:.3rem;letter-spacing:1px;}
+.login-logo span{color:var(--gold);}
+.login-sub{font-size:13px;color:var(--color-text-secondary);text-align:center;margin-bottom:1.5rem;}
+.login-err{font-size:13px;color:#c0392b;text-align:center;margin-top:.8rem;display:none;}
+</style>
+
+<div id="loginScreen">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">WVS<span>&</span>MTN</div>
+      <div class="login-sub">Admin Panel — please log in</div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="admin" />
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="doLogin()">Log In</button>
+      <div class="login-err" id="loginErr">Incorrect username or password.</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);text-align:center;margin-top:1rem;">Default: admin / wvsmtn2025</div>
+    </div>
+  </div>
+</div>
+
+<div id="adminApp" style="display:none;">
+<div class="admin-wrap">
+
+  <div class="sidebar">
+    <div class="sidebar-logo">WVS<span>&</span>MTN</div>
+    <div class="sidebar-label">Main</div>
+    <div class="nav-item active" onclick="showPanel('dashboard',this)"><span class="nav-icon">■</span> Dashboard</div>
+    <div class="nav-item" onclick="showPanel('products',this)"><span class="nav-icon">◈</span> Products</div>
+    <div class="nav-item" onclick="showPanel('addProduct',this)"><span class="nav-icon">+</span> Add Product</div>
+    <div class="sidebar-label">Store</div>
+    <div class="nav-item" onclick="showPanel('highlights',this)"><span class="nav-icon">★</span> Highlights</div>
+    <div class="nav-item" onclick="showPanel('profile',this)"><span class="nav-icon">◎</span> Shop Profile</div>
+    <div class="sidebar-label">Sales</div>
+    <div class="nav-item" onclick="showPanel('orders',this)"><span class="nav-icon">📦</span> Orders</div>
+    <div style="margin-top:auto;padding:1rem 1.2rem;">
+      <div onclick="doLogout()" style="font-size:13px;color:rgba(255,255,255,.4);cursor:pointer;">↩ Log out</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h2 id="topbarTitle">Dashboard</h2>
+      <span class="topbar-badge">Admin</span>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Total Products</div><div class="stat-num gold" id="statProducts">0</div></div>
+          <div class="stat-card"><div class="stat-label">Highlights</div><div class="stat-num" id="statHighlights">0</div></div>
+          <div class="stat-card"><div class="stat-label">Categories</div><div class="stat-num green">4</div></div>
+        </div>
+        <div class="form-section">
+          <h3>Quick actions</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-primary" onclick="showPanel('addProduct',document.querySelectorAll('.nav-item')[2])">+ Add product</button>
+            <button class="btn-sm-green" onclick="showPanel('highlights',document.querySelectorAll('.nav-item')[3])">Upload highlight</button>
+          </div>
+        </div>
+        <div class="form-section">
+          <h3>Recent products</h3>
+          <div id="dashRecentList"></div>
+        </div>
+      </div>
+
+      <!-- PRODUCTS LIST -->
+      <div class="panel" id="panel-products">
+        <div class="product-list" id="productList"></div>
+        <div id="emptyProducts" style="text-align:center;padding:2rem;color:var(--color-text-secondary);font-size:14px;display:none;">No products yet. Add one!</div>
+      </div>
+
+      <!-- ADD PRODUCT -->
+      <div class="panel" id="panel-addProduct">
+        <div class="form-section">
+          <h3>Product image</h3>
+          <div class="img-upload-box" id="addImgBox">
+            <img class="img-preview" id="addImgPreview" />
+            <div id="addImgPlaceholder">
+              <div class="upload-icon">↑</div>
+              <div class="upload-text">Click to upload product photo</div>
+              <div class="upload-hint">JPG, PNG, WEBP — recommended 800×800</div>
+            </div>
+            <input type="file" accept="image/*" onchange="previewImage(this,'addImgPreview','addImgPlaceholder')" id="addImgInput" />
+          </div>
+        </div>
+        <div class="form-section">
+          <h3>Product details</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Product name *</label><input type="text" id="pName" placeholder="e.g. WVS&MTN Fanny Pack" /></div>
+            <div class="form-group"><label>Price (₱) *</label><input type="number" id="pPrice" placeholder="350" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="pCat">
+                <option value="">-- Select --</option>
+                <option value="surf">Surf</option>
+                <option value="bags">Bags</option>
+                <option value="apparel">Apparel</option>
+                <option value="outdoor">Outdoor</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Stock status</label>
+              <select id="pStock">
+                <option value="available">Available</option>
+                <option value="soldout">Sold Out</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group"><label>Description (optional)</label><textarea id="pDesc" placeholder="Short description of the product..."></textarea></div>
+          </div>
+          <button class="btn-primary" onclick="addProduct()">Save Product</button>
+        </div>
+      </div>
+
+      <!-- HIGHLIGHTS -->
+      <div class="panel" id="panel-highlights">
+        <div class="form-section">
+          <h3>Homepage highlight photos</h3>
+          <div class="highlight-grid" id="highlightGrid">
+            <div class="highlight-add-box">
+              <div class="highlight-add-icon">+</div>
+              <div class="highlight-add-text">Add photo</div>
+              <input type="file" accept="image/*" multiple onchange="addHighlights(this)" />
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--color-text-secondary);">These photos appear in the Highlights section of your website.</div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="panel" id="panel-profile">
+        <div class="form-section">
+          <h3>Cover photo</h3>
+          <div class="profile-cover" id="coverBox">
+            <img id="coverPreview" style="display:none;width:100%;height:100%;object-fit:cover;" />
+            <div id="coverPlaceholder" style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <div style="font-size:22px;color:rgba(255,255,255,.4);">↑</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.5);">Click to upload cover photo</div>
+            </div>
+            <div class="profile-cover-overlay"><span class="cover-hint">Change cover</span></div>
+            <input type="file" accept="image/*" onchange="previewImage(this,'coverPreview','coverPlaceholder')" />
+          </div>
+          <div style="height:50px;"></div>
+          <div style="display:flex;align-items:flex-end;gap:.8rem;margin-bottom:1rem;">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar" id="avatarBox"><span id="avatarEmoji">★</span><img id="avatarPreview" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%;" /></div>
+              <button class="profile-avatar-edit">✎<input type="file" accept="image/*" onchange="previewAvatar(this)" /></button>
+            </div>
+            <div style="padding-bottom:.3rem;">
+              <div style="font-size:15px;font-weight:500;color:var(--color-text-primary);" id="profileNameDisplay">WVS & MTN</div>
+              <div style="font-size:12px;color:var(--color-text-secondary);">Lifestyle Essentials</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <h3>Shop info</h3>
+          <div class="form-row full">
+            <div class="form-group"><label>Shop name</label><input type="text" id="shopName" value="WVS & MTN" oninput="document.getElementById('profileNameDisplay').textContent=this.value" /></div>
+          </div>
+          <div class="form-row full">
+            <div class="form-group"><label>Address</label><input type="text" id="shopAddress" value="Tuburan, Tunga-tunga, Maasin City, Southern Leyte" /></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Facebook page URL</label><input type="text" id="shopFB" value="https://facebook.com/WVSMTN" /></div>
+            <div class="form-group"><label>Contact number</label><input type="text" id="shopPhone" placeholder="09XX XXX XXXX" /></div>
+          </div>
+          <button class="btn-primary" onclick="saveProfile()">Save Profile</button>
+        </div>
+      </div>
+
+      <!-- ORDERS -->
+      <div class="panel" id="panel-orders">
+        <div class="form-section">
+          <h3>Customer Orders</h3>
+          <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:1rem;">Orders submitted through the checkout are sent to Formspree. This section shows cart history from the wvsmtn_cart localStorage.</p>
+          <div id="ordersList" style="display:flex;flex-direction:column;gap:8px;"></div>
+          <div id="noOrders" style="text-align:center;padding:2rem;color:var(--color-text-secondary);font-size:14px;">No cart data available</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var products=JSON.parse(localStorage.getItem('wvs_products')||'[]');
+var highlights=JSON.parse(localStorage.getItem('wvs_highlights')||'[]');
+
+function doLogin(){
+  var u=document.getElementById('loginUser').value;
+  var p=document.getElementById('loginPass').value;
+  if(u==='admin'&&p==='wvsmtn2025'){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminApp').style.display='block';
+    refreshAll();
+  } else {
+    document.getElementById('loginErr').style.display='block';
+  }
+}
+
+function doLogout(){
+  document.getElementById('adminApp').style.display='none';
+  document.getElementById('loginScreen').style.display='block';
+}
+
+function showPanel(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  var titles={dashboard:'Dashboard',products:'Products',addProduct:'Add Product',highlights:'Highlights',profile:'Shop Profile',orders:'Orders'};
+  document.getElementById('topbarTitle').textContent=titles[id]||id;
+  if(id==='products') renderProductList();
+  if(id==='dashboard') renderDashboard();
+  if(id==='highlights') renderHighlights();
+  if(id==='orders') renderOrders();
+}
+
+function previewImage(input,previewId,placeholderId){
+  var file=input.files[0];
+  if(!file) return;
+  var r=new FileReader();
+  r.onload=function(e){
+    var img=document.getElementById(previewId);
+    img.src=e.target.result;
+    img.style.display='block';
+    var ph=document.getElementById(placeholderId);
+    if(ph) ph.style.display='none';
+  };
+  r.readAsDataURL(file);
+}
+
+function previewAvatar(input){
+  var file=input.files[0];
+  if(!file) return;
+  var r=new FileReader();
+  r.onload=function(e){
+    document.getElementById('avatarEmoji').style.display='none';
+    var img=document.getElementById('avatarPreview');
+    img.src=e.target.result;
+    img.style.display='block';
+  };
+  r.readAsDataURL(file);
+}
+
+function addProduct(){
+  var name=document.getElementById('pName').value.trim();
+  var price=document.getElementById('pPrice').value;
+  var cat=document.getElementById('pCat').value;
+  var stock=document.getElementById('pStock').value;
+  var desc=document.getElementById('pDesc').value.trim();
+  var imgSrc=document.getElementById('addImgPreview').src||'';
+  if(!name||!price||!cat){toast('Please fill in name, price, and category.');return;}
+  var product={id:Date.now(),name,price:parseFloat(price),cat,stock,desc,img:imgSrc&&imgSrc!==window.location.href?imgSrc:''};
+  products.push(product);
+  localStorage.setItem('wvs_products',JSON.stringify(products));
+  document.getElementById('pName').value='';
+  document.getElementById('pPrice').value='';
+  document.getElementById('pCat').value='';
+  document.getElementById('pDesc').value='';
+  document.getElementById('addImgPreview').src='';
+  document.getElementById('addImgPreview').style.display='none';
+  document.getElementById('addImgPlaceholder').style.display='block';
+  document.getElementById('addImgInput').value='';
+  toast('Product saved!');
+  refreshAll();
+}
+
+function deleteProduct(id){
+  products=products.filter(p=>p.id!==id);
+  localStorage.setItem('wvs_products',JSON.stringify(products));
+  renderProductList();
+  renderDashboard();
+  toast('Product deleted.');
+}
+
+function toggleStock(id){
+  var p=products.find(x=>x.id===id);
+  if(!p) return;
+  p.stock=p.stock==='available'?'soldout':'available';
+  localStorage.setItem('wvs_products',JSON.stringify(products));
+  renderProductList();
+  toast('Stock status updated.');
+}
+
+function renderProductList(){
+  var list=document.getElementById('productList');
+  var empty=document.getElementById('emptyProducts');
+  if(products.length===0){list.innerHTML='';empty.style.display='block';return;}
+  empty.style.display='none';
+  list.innerHTML=products.map(p=>`
+    <div class="product-row">
+      <div class="product-thumb">${p.img?'<img src="'+p.img+'" />':(p.cat==='surf'?'🏄':p.cat==='bags'?'🎒':p.cat==='apparel'?'👕':'⛺')}</div>
+      <div class="product-info">
+        <div class="product-name">${p.name}<span class="badge-cat">${p.cat}</span></div>
+        <div class="product-meta">${p.stock==='soldout'?'<span style="color:#c0392b;">Sold out</span>':'In stock'} ${p.desc?'· '+p.desc.substring(0,40)+'...':''}</div>
+      </div>
+      <span class="product-price">₱${p.price.toLocaleString()}</span>
+      <div class="product-actions">
+        <button class="btn-edit" onclick="toggleStock(${p.id})">${p.stock==='available'?'Mark sold out':'Mark available'}</button>
+        <button class="btn-danger" onclick="deleteProduct(${p.id})">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addHighlights(input){
+  var files=Array.from(input.files);
+  var loaded=0;
+  files.forEach(file=>{
+    var r=new FileReader();
+    r.onload=function(e){
+      highlights.push(e.target.result);
+      loaded++;
+      if(loaded===files.length){
+        localStorage.setItem('wvs_highlights',JSON.stringify(highlights));
+        renderHighlights();
+        refreshStats();
+        toast(files.length+' highlight'+(files.length>1?'s':'')+' added!');
+      }
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+function deleteHighlight(idx){
+  highlights.splice(idx,1);
+  localStorage.setItem('wvs_highlights',JSON.stringify(highlights));
+  renderHighlights();
+  refreshStats();
+  toast('Highlight removed.');
+}
+
+function renderHighlights(){
+  var grid=document.getElementById('highlightGrid');
+  var cards=highlights.map((h,i)=>`
+    <div class="highlight-card">
+      <img src="${h}" style="width:100%;height:100%;object-fit:cover;" />
+      <button class="highlight-del" onclick="deleteHighlight(${i})">✕</button>
+    </div>
+  `).join('');
+  grid.innerHTML=cards+`
+    <div class="highlight-add-box">
+      <div class="highlight-add-icon">+</div>
+      <div class="highlight-add-text">Add photo</div>
+      <input type="file" accept="image/*" multiple onchange="addHighlights(this)" />
+    </div>`;
+}
+
+function renderDashboard(){
+  refreshStats();
+  var recent=products.slice(-4).reverse();
+  var el=document.getElementById('dashRecentList');
+  if(recent.length===0){el.innerHTML='<div style="font-size:13px;color:var(--color-text-secondary);">No products yet.</div>';return;}
+  el.innerHTML=recent.map(p=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:.5rem 0;border-bottom:0.5px solid var(--color-border-tertiary);">
+      <div style="width:32px;height:32px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;font-size:14px;overflow:hidden;">${p.img?'<img src="'+p.img+'" style="width:100%;height:100%;object-fit:cover;" />':(p.cat==='surf'?'🏄':p.cat==='bags'?'🎒':p.cat==='apparel'?'👕':'⛺')}</div>
+      <div style="flex:1;font-size:13px;color:var(--color-text-primary);">${p.name}</div>
+      <div style="font-size:13px;font-weight:500;color:var(--green);">₱${p.price.toLocaleString()}</div>
+    </div>
+  `).join('');
+}
+
+function refreshStats(){
+  document.getElementById('statProducts').textContent=products.length;
+  document.getElementById('statHighlights').textContent=highlights.length;
+}
+
+function saveProfile(){
+  toast('Profile saved!');
+}
+
+function refreshAll(){
+  renderDashboard();
+  renderHighlights();
+}
+
+function renderOrders(){
+  var cart=JSON.parse(localStorage.getItem('wvsmtn_cart')||'[]');
+  var list=document.getElementById('ordersList');
+  var noOrders=document.getElementById('noOrders');
+  
+  if(cart.length===0){
+    list.innerHTML='';
+    noOrders.style.display='block';
+    return;
+  }
+  
+  noOrders.style.display='none';
+  var total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  list.innerHTML=`
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;">
+      <div style="font-weight:500;margin-bottom:0.8rem;color:var(--color-text-primary);">Current Cart Contents:</div>
+      ${cart.map(i=>`
+        <div style="display:flex;justify-content:space-between;padding:0.4rem 0;font-size:13px;border-bottom:0.5px solid var(--color-border-tertiary);">
+          <span>${i.name} × ${i.qty}</span>
+          <strong>₱${(i.price*i.qty).toLocaleString()}</strong>
+        </div>
+      `).join('')}
+      <div style="display:flex;justify-content:space-between;margin-top:0.8rem;font-weight:500;color:var(--green);">
+        <span>Total:</span>
+        <span>₱${total.toLocaleString()}</span>
+      </div>
+      <div style="margin-top:1rem;font-size:12px;color:var(--color-text-secondary);">
+        Note: Orders submitted through checkout are sent to Formspree. This shows the active cart in localStorage.
+      </div>
+    </div>`;
+}
+
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+  const navbar = document.querySelector('.navbar');
+  if (navbar) {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  }
+});
+</script>
