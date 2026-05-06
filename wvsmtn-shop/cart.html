@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cart — WVS & MTN</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Permanent+Marker&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="logo">WVS<span>&</span>MTN</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Shop</a></li>
+      <li><a href="cart.html">Cart <span class="cart-count" id="cartCount">0</span></a></li>
+    </ul>
+    <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="products.html">Shop</a>
+    <a href="cart.html">Cart</a>
+  </div>
+
+  <div class="cart-page">
+    <h1 class="page-title">Your Cart</h1>
+    <div id="cartItems"></div>
+    <div id="cartFooter"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo">WVS<span>&</span>MTN</div>
+    <p>© 2025 WVS & MTN Lifestyle Essentials.</p>
+  </footer>
+
+  <script src="js/cart.js"></script>
+  <script>
+    function renderCart() {
+      const cart = getCart();
+      const itemsEl = document.getElementById('cartItems');
+      const footerEl = document.getElementById('cartFooter');
+
+      if (cart.length === 0) {
+        itemsEl.innerHTML = `
+          <div class="empty-state">
+            <h3>Your cart is empty</h3>
+            <p>Go add some items from the shop!</p>
+            <br>
+            <a href="products.html" class="btn-primary">Browse Products</a>
+          </div>`;
+        footerEl.innerHTML = '';
+        return;
+      }
+
+      itemsEl.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <div>
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-price">₱${(item.price * item.qty).toLocaleString()}</div>
+          </div>
+          <div class="cart-item-controls">
+            <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+            <span>${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+            <button class="qty-btn" style="background:#c0392b" onclick="removeItem(${item.id})">✕</button>
+          </div>
+        </div>
+      `).join('');
+
+      const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+      footerEl.innerHTML = `
+        <div class="cart-total">
+          Total: <span>₱${total.toLocaleString()}</span>
+        </div>
+        <br>
+        <a href="checkout.html" class="btn-primary" style="display:block;text-align:center;margin-top:1rem;">
+          Proceed to Checkout
+        </a>
+      `;
+    }
+
+    function changeQty(id, delta) {
+      const cart = getCart();
+      const item = cart.find(i => i.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) {
+        const idx = cart.indexOf(item);
+        cart.splice(idx, 1);
+      }
+      saveCart(cart);
+      updateCartCount();
+      renderCart();
+    }
+
+    function removeItem(id) {
+      const cart = getCart().filter(i => i.id !== id);
+      saveCart(cart);
+      updateCartCount();
+      renderCart();
+    }
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+
+    renderCart();
+  </script>
+</body>
+</html>
