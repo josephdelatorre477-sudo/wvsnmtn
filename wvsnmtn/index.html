@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WVS & MTN — Lifestyle Essentials</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Permanent+Marker&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <img src="image/logo.png" alt="WVS & MTN Logo" class="logo-img">
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Shop</a></li>
+      <li><a href="cart.html" style="font-size:1.3rem;display:flex;align-items:center;gap:6px;">🛒 <span class="cart-count" id="cartCount">0</span></a></li>
+    </ul>
+    <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <a href="index.html">Home</a>
+      <a href="products.html">Shop</a>
+      <a href="cart.html">Cart</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <p class="hero-tagline">Maasin City × Siargao Island</p>
+      <h1 class="hero-title">RIDE.<br>EXPLORE.<br>LIVE.</h1>
+      <p class="hero-sub">Surf gear, outdoor essentials, and lifestyle goods for the wave chasers and mountain seekers.</p>
+      <a href="products.html" class="btn-primary">Shop Now</a>
+    </div>
+    <div class="hero-badge">EST.<br>WVS<br>&MTN</div>
+  </section>
+
+  <!-- HIGHLIGHTS GALLERY -->
+  <section class="highlights-gallery" id="highlightsSection" style="display:none;padding:3rem 2rem;background:#f9f7f3;">
+    <div style="max-width:1200px;margin:0 auto;">
+      <h2 style="font-size:24px;font-weight:700;color:#0f0f0f;text-align:center;margin-bottom:2rem;">Our Brand Story</h2>
+      <div id="highlightsGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;">
+        <!-- Highlights loaded from admin panel -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="categories">
+    <h2 class="section-title">What We Carry</h2>
+    <div class="cat-grid">
+      <div class="cat-card" onclick="location.href='products.html?cat=surf'">
+        <div class="cat-icon">🏄</div>
+        <h3>Surf</h3>
+        <p>Boards, leashes, wax & more</p>
+      </div>
+      <div class="cat-card" onclick="location.href='products.html?cat=bags'">
+        <div class="cat-icon">🎒</div>
+        <h3>Bags</h3>
+        <p>Fanny packs & outdoor packs</p>
+      </div>
+      <div class="cat-card" onclick="location.href='products.html?cat=apparel'">
+        <div class="cat-icon">👕</div>
+        <h3>Apparel</h3>
+        <p>Boardshorts, hats & tees</p>
+      </div>
+      <div class="cat-card" onclick="location.href='products.html?cat=outdoor'">
+        <div class="cat-icon">⛺</div>
+        <h3>Outdoor</h3>
+        <p>Hammocks & camping gear</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAROUSEL BANNER WITH VIDEOS/IMAGES -->
+  <section class="carousel-section">
+    <div class="carousel-container">
+      <div class="carousel-track" id="carouselTrack">
+        <!-- Carousel items loaded from admin panel -->
+      </div>
+      
+      <!-- Play/Pause Button -->
+      <button class="carousel-play-pause" title="Toggle autoplay">⏸</button>
+      
+      <!-- Navigation Buttons -->
+      <div class="carousel-controls">
+        <button class="carousel-btn carousel-prev" title="Previous slide">‹</button>
+        <button class="carousel-btn carousel-next" title="Next slide">›</button>
+      </div>
+      
+      <!-- Indicators -->
+      <div class="carousel-indicators"></div>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="featured">
+    <h2 class="section-title">Featured Products</h2>
+    <div class="products-grid" id="featuredProducts">
+      <!-- Products loaded here -->
+    </div>
+    <div class="view-all">
+      <a href="products.html" class="btn-outline">View All Products</a>
+    </div>
+  </section>
+
+
+
+  <!-- SOCIAL MEDIA SECTION -->
+  <section class="social-section">
+    <h2 class="social-title">Follow Our Adventures</h2>
+    <p class="social-subtitle">See real riders, real gear, real moments. Join our community across all platforms.</p>
+    <div class="social-links">
+      <a href="https://instagram.com/wvsmtn" target="_blank" class="social-btn">📷 Instagram</a>
+      <a href="https://facebook.com/wvsmtn" target="_blank" class="social-btn">👍 Facebook</a>
+      <a href="https://tiktok.com/@wvsmtn" target="_blank" class="social-btn">🎵 TikTok</a>
+      <a href="https://youtube.com/@wvsmtn" target="_blank" class="social-btn">▶️ YouTube</a>
+      <a href="https://twitter.com/wvsmtn" target="_blank" class="social-btn">𝕏 Twitter</a>
+    </div>
+  </section>
+
+  <!-- SURFSKATE RENTAL BANNER -->
+  <section class="rental-banner">
+    <div class="rental-content">
+      <span class="rental-tag">NEW</span>
+      <h2>Surfskate Rentals Available!</h2>
+      <p>Street surfing made easy. Hourly, daily, or weekly — ride the streets your way.</p>
+      <a href="https://www.facebook.com/WVSMTN" target="_blank" class="btn-primary">Message Us to Book</a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about">
+    <div class="about-text">
+      <h2>About Us</h2>
+      <p>WVS & MTN is your go-to lifestyle shop based in <strong>Maasin City, Southern Leyte</strong>. We carry quality surf gear, outdoor equipment, and lifestyle essentials — whether you're hitting the waves or heading to the highlands.</p>
+      <p>Now also bringing gear to <strong>Siargao Island</strong> through WVS & MTN x Langyaw Siargao.</p>
+      <a href="https://www.facebook.com/WVSMTN" target="_blank" class="btn-outline">Visit our Facebook Page</a>
+    </div>
+    <div class="about-deco">
+      <div class="deco-box">
+        <span class="deco-num">Quality</span>
+        <span class="deco-label">Products</span>
+      </div>
+      <div class="deco-box">
+        <span class="deco-num">2</span>
+        <span class="deco-label">Locations</span>
+      </div>
+      <div class="deco-box">
+        <span class="deco-num">Sustainability</span>
+        <span class="deco-label">Eco-Friendly</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER - ENHANCED -->
+  <footer class="footer-enhanced">
+    <div class="footer-content">
+      <div class="footer-column footer-logo-section">
+        <div class="footer-logo">WVS<span>&</span>MTN Products</div>
+        <div class="footer-contact">
+          <p>📍 Coastline Outdoor, Tuburan, Tunga-tunga Maasin City, Southern Leyte
+</p>
+          <p>📍 Buendia Tunga-tunga Maasin City, Southern Leyte
+</p>
+          <p style="margin-top: 1rem;">📍Langyaw Siargao, Siargao Island</p>
+        </div>
+      </div>
+      
+      <div class="footer-column">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="products.html?cat=surf">Surf Gear</a></li>
+          <li><a href="products.html?cat=bags">Bags & Packs</a></li>
+          <li><a href="products.html?cat=apparel">Apparel</a></li>
+          <li><a href="products.html?cat=outdoor">Outdoor Gear</a></li>
+          <li><a href="products.html">View All Products</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-column">
+        <h4>WVS & MTN</h4>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="https://www.facebook.com/WVSMTN" target="_blank">Our Story</a></li>
+          <li><a href="#values">Sustainability</a></li>
+          <li><a href="https://www.facebook.com/WVSMTN" target="_blank">Contact Us</a></li>
+        </ul>
+      </div>
+      
+      
+      <div class="footer-column">
+        <h4>Follow Us</h4>
+        <ul>
+          <li><a href="https://instagram.com/wvsmtn" target="_blank">📷 Instagram</a></li>
+          <li><a href="https://facebook.com/wvsmtn" target="_blank">🅕 Facebook</a></li>
+          
+        </ul>
+      </div>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2025 WVS & MTN Lifestyle Essentials. All rights reserved.</p>
+      <div class="footer-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Refund Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/cart.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/carousel.js"></script>
+  <script>
+    // Load carousel from admin panel
+    function loadCarousel() {
+      const carouselData = JSON.parse(localStorage.getItem('wvs_carousel') || '[]');
+      const track = document.getElementById('carouselTrack');
+      
+      // Default carousel items if none exist
+      if (carouselData.length === 0) {
+        track.innerHTML = `
+          <div class="carousel-slide">
+            <div class="carousel-fallback">🏄</div>
+            <div class="carousel-content">
+              <h3>The Surfer</h3>
+              <p>Catch the perfect wave with premium surf gear and quality equipment.</p>
+            </div>
+          </div>
+          <div class="carousel-slide">
+            <div class="carousel-fallback">🎒</div>
+            <div class="carousel-content">
+              <h3>The Adventurer</h3>
+              <p>Explore with confidence. Our outdoor gear is built for durability and comfort.</p>
+            </div>
+          </div>
+          <div class="carousel-slide">
+            <div class="carousel-fallback">👕</div>
+            <div class="carousel-content">
+              <h3>The Lifestyle</h3>
+              <p>Express your style with our curated apparel collection.</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+      
+      // Load carousel items from admin panel
+      track.innerHTML = carouselData.map(item => `
+        <div class="carousel-slide">
+          ${item.type === 'video' ? 
+            `<video style="width:100%;height:100%;object-fit:cover;border-radius:8px;" autoplay muted loop>
+              <source src="${item.src}" type="video/mp4">
+            </video>` :
+            `<img src="${item.src}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />`
+          }
+          ${item.title || item.desc ? `
+            <div class="carousel-content">
+              ${item.title ? `<h3>${item.title}</h3>` : ''}
+              ${item.desc ? `<p>${item.desc}</p>` : ''}
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+    
+    // Load featured products from admin panel
+    function loadFeaturedProducts() {
+      const featuredData = JSON.parse(localStorage.getItem('wvs_featured') || '[]');
+      
+      // Create product objects with proper IDs
+      const featured = featuredData.map(f => ({
+        id: f.id,
+        name: f.name,
+        price: f.price || 0,
+        category: f.cat || 'uncategorized',
+        img: f.img || ''
+      }));
+
+      const container = document.getElementById('featuredProducts');
+      
+      if (featured.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#999;grid-column:1/-1;padding:2rem;">No featured products yet. Check back soon!</p>';
+        return;
+      }
+
+      container.innerHTML = '';
+      featured.forEach(p => {
+        container.innerHTML += `
+          <div class="product-card">
+            <div class="product-emoji">${p.img ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />` : '📦'}</div>
+            <div class="product-info">
+              <h3>${p.name}</h3>
+              <p class="product-price">₱${p.price.toLocaleString()}</p>
+              <button class="btn-add" onclick="addToCart(${p.id}, '${p.name}', ${p.price})">Add to Cart</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Load highlights gallery from admin panel
+    function loadHighlights() {
+      const highlightsData = JSON.parse(localStorage.getItem('wvs_highlights') || '[]');
+      const section = document.getElementById('highlightsSection');
+      const grid = document.getElementById('highlightsGrid');
+      
+      if (highlightsData.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      
+      section.style.display = 'block';
+      grid.innerHTML = highlightsData.map((img, i) => `
+        <div style="border-radius:12px;overflow:hidden;aspect-ratio:4/5;background:#f0ece4;">
+          <img src="${img}" style="width:100%;height:100%;object-fit:cover;" />
+        </div>
+      `).join('');
+    }
+
+    // Load on page load
+    loadCarousel();
+    loadFeaturedProducts();
+    loadHighlights();
+
+    // Cart count
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('wvsmtn_cart') || '[]');
+      document.getElementById('cartCount').textContent = cart.reduce((a, b) => a + b.qty, 0);
+    }
+    updateCartCount();
+
+    // Mobile menu
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      document.querySelector('.navbar').classList.toggle('scrolled', window.scrollY > 40);
+    });
+  </script>
+</body>
+</html>

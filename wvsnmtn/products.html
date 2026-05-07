@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop — WVS & MTN</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=Permanent+Marker&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <img src="image/logo.png" alt="WVS & MTN Logo" class="logo-img">
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="products.html">Shop</a></li>
+      <li><a href="cart.html" style="font-size:1.3rem;display:flex;align-items:center;gap:6px;">🛒 <span class="cart-count" id="cartCount">0</span></a></li>
+    </ul>
+    <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <a href="index.html">Home</a>
+      <a href="products.html">Shop</a>
+      <a href="cart.html">Cart</a>
+    </div>
+  </div>
+
+  <div class="products-page">
+    <h1 class="page-title">All Products</h1>
+
+    <!-- Filter Buttons -->
+    <div class="filter-bar">
+      <button class="filter-btn active" data-category="all" onclick="filterProducts('all', this)">All</button>
+      <button class="filter-btn" data-category="surf" onclick="filterProducts('surf', this)"> Surf Accesories</button>
+      <button class="filter-btn" data-category="bags" onclick="filterProducts('bags', this)"> Bags</button>
+      <button class="filter-btn" data-category="apparel" onclick="filterProducts('apparel', this)"> Apparel</button>
+      <button class="filter-btn" data-category="outdoor" onclick="filterProducts('outdoor', this)"> Outdoor</button>
+    </div>
+
+    <div class="products-grid" id="productsGrid"></div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-logo">WVS<span>&</span>MTN</div>
+    <p>Tuburan, Tunga-tunga, Maasin City, Southern Leyte</p>
+    <p>📘 <a href="https://www.facebook.com/WVSMTN" target="_blank">WVS & MTN on Facebook</a></p>
+    <p class="footer-copy">© 2025 WVS & MTN Lifestyle Essentials. All rights reserved.</p>
+  </footer>
+
+  <script src="js/cart.js"></script>
+  <script src="js/utils.js"></script>
+  <script>
+    // Load products from admin panel
+    let allProducts = [];
+
+    function loadProducts() {
+      // Get products from admin panel's localStorage
+      const adminProducts = JSON.parse(localStorage.getItem('wvs_products') || '[]');
+      
+      // Convert admin format to display format with fallback emoji
+      allProducts = adminProducts.map(p => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        category: p.cat,
+        img: p.img || '',
+        emoji: p.cat === 'surf' ? '🏄' : p.cat === 'bags' ? '🎒' : p.cat === 'apparel' ? '👕' : '⛺'
+      }));
+
+      // Show loading message if no products
+      if (allProducts.length === 0) {
+        document.getElementById('productsGrid').innerHTML = '<div class="empty-state" style="grid-column:1/-1;text-align:center;padding:3rem;"><h3>No products added yet</h3><p>Check back soon for our latest items!</p></div>';
+        return;
+      }
+
+      renderProducts(allProducts);
+    }
+
+    let currentFilter = 'all';
+
+    function renderProducts(products) {
+      const grid = document.getElementById('productsGrid');
+      if (products.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><h3>No products found</h3><p>Try another category.</p></div>`;
+        return;
+      }
+      grid.innerHTML = products.map(p => `
+        <div class="product-card">
+          <div class="product-emoji">${p.img ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />` : p.emoji}</div>
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <p class="product-price">₱${p.price.toLocaleString()}</p>
+            <button class="btn-add" onclick="addToCart(${p.id}, '${p.name}', ${p.price})">Add to Cart</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterProducts(cat, btn) {
+      currentFilter = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filtered = cat === 'all' ? allProducts : allProducts.filter(p => p.category === cat);
+      renderProducts(filtered);
+    }
+
+    // Check URL param for category and apply filter correctly
+    window.addEventListener('DOMContentLoaded', function() {
+      loadProducts();
+      
+      const params = new URLSearchParams(window.location.search);
+      const catParam = params.get('cat');
+      
+      if (catParam && allProducts.length > 0) {
+        // Find the button that matches the category
+        const buttons = document.querySelectorAll('.filter-btn');
+        let targetBtn = null;
+        
+        for (const btn of buttons) {
+          const btnCategory = btn.getAttribute('data-category');
+          if (btnCategory === catParam) {
+            targetBtn = btn;
+            break;
+          }
+        }
+        
+        if (targetBtn) {
+          filterProducts(catParam, targetBtn);
+        } else {
+          renderProducts(allProducts);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
